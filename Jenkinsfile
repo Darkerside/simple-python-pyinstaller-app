@@ -35,7 +35,9 @@ pipeline {
                     junit 'test-reports/results.xml' 
                 }
                 success {
-                    sh 'rm -R -f ./build'
+                    withEnv(["HOME=${env.WORKSPACE}"]) {
+                        sh 'rm -R -f ./build'
+                    }
                 }
             }
         }

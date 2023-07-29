@@ -25,6 +25,7 @@ pipeline {
             }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
+                    sh 'pip3 install Flask'
                     sh 'pip3 install pytest'
                     sh 'python -m pytest --junit-xml test-reports/results.xml sources/test_calc.py' 
                     sh 'python -m pytest sources/test_api.py'

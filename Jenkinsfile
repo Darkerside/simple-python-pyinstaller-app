@@ -12,7 +12,6 @@ pipeline {
             }
             steps {
                 sh 'python -m py_compile sources/add2vals.py sources/calc.py'
-                sh 'ls -la /home/venv/bin/pip'
                 sh 'su root'
                 sh 'pip3 install --upgrade pip && pip3 install wheel'
                 sh 'pip3 install Flask --user'

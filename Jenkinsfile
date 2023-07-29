@@ -56,7 +56,11 @@ pipeline {
             }
         }
         stage('Deploy') {
-            agent any
+            agent {
+                docker {
+                    image 'alpinelinux/rsyncd'
+                }
+            }
             steps {
                 input message: 'Yakin untuk deploy App ke production?'
                 sh 'chmod +x -R ./jenkins/scripts/deliver.sh'

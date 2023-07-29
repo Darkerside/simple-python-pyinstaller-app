@@ -1,4 +1,3 @@
-# hello.py
 from flask import Flask
 from flask import send_file
 
@@ -10,7 +9,7 @@ def hello_world():
 
 
 @app.route('/download')
-def downloadFile(): #In your case fname is your filename
+def downloadFile():
     try:
        path = f'./dist/add2vals'
        return send_file(path,mimetype='text/x-python', download_name='add2vals', as_attachment=True)

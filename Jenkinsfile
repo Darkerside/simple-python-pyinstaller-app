@@ -43,6 +43,7 @@ pipeline {
                 input message: 'Yakin untuk deploy App ke production?'
                 sshagent (credentials: ['ec2jenkins']) {
                     sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
+                    sh './jenkins/scripts/deploy.sh'
                 }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'chmod +x -R ./jenkins/scripts/kill.sh'

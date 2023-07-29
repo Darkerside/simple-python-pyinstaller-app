@@ -57,14 +57,13 @@ pipeline {
         stage('Deploy') {
             agent {
                 docker {
-                    image 'python:3.7-alpine3.17'
+                    image 'rapidfort/flaskapp:latest'
                     args '-p 3000:3000'
                 }
             }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     input message: 'Yakin untuk deploy App ke production?'
-                    sh 'pip3 install Flask'
                     sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
                     sh 'chmod +x -R ./jenkins/scripts/kill.sh'
                     sh './jenkins/scripts/deploy.sh'

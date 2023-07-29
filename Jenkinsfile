@@ -46,6 +46,7 @@ pipeline {
                 dir(path: env.BUILD_ID) { 
                     unstash(name: 'compiled-results') 
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
+                    sh "cp ${env.BUILD_ID}/sources/dist/add2vals ~/add2vals"
                 }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     input message: 'Yakin untuk deploy App ke production?'

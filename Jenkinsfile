@@ -43,19 +43,21 @@ pipeline {
                 IMAGE = 'cdrx/pyinstaller-linux:python3'
             }
             steps {
-                sh 'mkdir ~/pythonapp'
                 dir(path: env.BUILD_ID) { 
                     unstash(name: 'compiled-results') 
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                     sh "cp ./sources/dist/add2vals ~/add2vals"
                 }
-                withEnv(["HOME=${env.WORKSPACE}"]) {
-                    input message: 'Yakin untuk deploy App ke production?'
-                    sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
-                    sh 'chmod +x -R ./jenkins/scripts/kill.sh'
-                    sh './jenkins/scripts/deliver.sh'
-                    sh './jenkins/scripts/kill.sh' 
+                input message: 'Yakin untuk deploy App ke production?'
+                script {
+                    sshagent(['ec2jenkinfile']) {
+                        sh "rsync -auvvzr --rsh 'ssh ssh -o StrictHostKeyChecking=no' ~/pythonapp/ ec2-user@ec2-13-229-219-204.ap-southeast-1.compute.amazonaws.com:/home/ec2-user/pythonapp/"
+                    }
                 }
+                sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
+                sh 'chmod +x -R ./jenkins/scripts/kill.sh'
+                sh './jenkins/scripts/deliver.sh'
+                sh './jenkins/scripts/kill.sh'
             }
             post {
                 success {

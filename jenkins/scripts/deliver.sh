@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 set +x
+mkdir ~/pythonapp
 cp ./api.py ~/pythonapp/api.py
-cd ~/
-
-cp 
+cp ./add2vals ~/pythonapp/add2vals
+ls

@@ -8,6 +8,7 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.7-alpine3.17'
+                    image 'cdrx/pyinstaller-linux:latest'
                 }
             }
             steps {
@@ -35,11 +36,6 @@ pipeline {
             }
         }
         stage('Deliver') { 
-            agent {
-                docker {
-                    image 'cdrx/pyinstaller-linux:python2'
-                }
-            }
             steps {
                 input message: 'Yakin untuk deploy App ke production?' 
                 sh './jenkins/scripts/deliver.sh'

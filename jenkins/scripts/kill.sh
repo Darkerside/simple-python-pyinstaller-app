@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-
-sleep(1m)
+curl http://127.0.0.1:5000
+sleep 1m
 set -x
 kill $(cat .pidfile)

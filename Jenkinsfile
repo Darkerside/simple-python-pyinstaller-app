@@ -43,13 +43,15 @@ pipeline {
                 IMAGE = 'cdrx/pyinstaller-linux:latest'
             }
             steps {
+                withEnv(["HOME=${env.WORKSPACE}"]) {
+                    sh 'pip install Flask --user'
+                }
                 dir(path: env.BUILD_ID) { 
                     unstash(name: 'compiled-results') 
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                 }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     input message: 'Yakin untuk deploy App ke production?'
-                    sh 'pip install Flask --user'
                     sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
                     sh 'chmod +x -R ./jenkins/scripts/kill.sh'
                     sh './jenkins/scripts/deliver.sh'

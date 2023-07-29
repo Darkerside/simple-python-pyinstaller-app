@@ -18,8 +18,10 @@ pipeline {
         }
         stage('Test') { 
             steps {
-                sh 'pip3 install pytest'
-                sh 'py.test --junit-xml test-reports/results.xml sources/test_calc.py' 
+                withEnv(["HOME=${env.WORKSPACE}"]) {
+                    sh 'pip3 install pytest'
+                    sh 'py.test --junit-xml test-reports/results.xml sources/test_calc.py' 
+                }
             }
             post {
                 always {
@@ -29,12 +31,14 @@ pipeline {
         }
         stage('Deliver') { 
             steps {
-                input message: 'Yakin untuk deploy App ke production?'
-                sh 'pip3 install pyinstaller'
-                sh 'pip3 install Flask --user'
-                sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
-                sh './jenkins/scripts/deliver.sh'
-                sh './jenkins/scripts/kill.sh' 
+                withEnv(["HOME=${env.WORKSPACE}"]) {
+                    input message: 'Yakin untuk deploy App ke production?'
+                    sh 'pip3 install pyinstaller'
+                    sh 'pip3 install Flask --user'
+                    sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
+                    sh './jenkins/scripts/deliver.sh'
+                    sh './jenkins/scripts/kill.sh' 
+                }
             }
         }
     }

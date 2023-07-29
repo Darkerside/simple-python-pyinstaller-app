@@ -43,5 +43,14 @@ pipeline {
                 }
             }
         }
+        // stage('Deploy') { 
+        //     steps {
+        //         withEnv(["HOME=${env.WORKSPACE}"]) {
+        //             input message: 'Yakin untuk deploy App ke production?'
+        //             sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
+        //             sh './jenkins/scripts/deploy.sh' 
+        //         }
+        //     }
+        // }
     }
 }

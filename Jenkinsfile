@@ -60,9 +60,10 @@ pipeline {
             steps {
                 input message: 'Yakin untuk deploy App ke production?'
                 sshagent (credentials: ['ec2jenkins']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l ec2-user 13.229.219.204 'cd dicoding/simple-python-pyinstaller-app'"
-                    sh "ssh -o StrictHostKeyChecking=no -l ec2-user 13.229.219.204 'git pull'"
-                    sh "ssh -o StrictHostKeyChecking=no -l ec2-user 13.229.219.204 'flask --app api run -l 172.31.44.164'"
+                    sh "ssh -o StrictHostKeyChecking=no -l ec2-user 13.229.219.204"
+                    sh "cd dicoding/simple-python-pyinstaller-app"
+                    sh "git pull"
+                    sh "flask --app api run -l 172.31.44.164"
                 }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'chmod +x -R ./jenkins/scripts/kill.sh'

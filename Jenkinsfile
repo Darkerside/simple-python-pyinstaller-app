@@ -37,6 +37,7 @@ pipeline {
         stage('Deliver') { 
             steps {
                 input message: 'Yakin untuk deploy App ke production?' 
+                sh 'chmod +x -R ${env.WORKSPACE}'
                 sh './jenkins/scripts/deliver.sh'
                 sh './jenkins/scripts/kill.sh' 
             }

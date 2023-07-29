@@ -1,13 +1,14 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.7-alpine3.17'
-        }
-    }
+    agent none
     options {
         skipStagesAfterUnstable()
     }
     stages {
+        {
+            docker {
+                image 'python:3.7-alpine3.17'
+            }
+        }
         stage('Build') {
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
@@ -17,6 +18,11 @@ pipeline {
             }
         }
         stage('Test') { 
+            {
+                docker {
+                    image 'python:3.7-alpine3.17'
+                }
+            }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'pip3 install pytest'
@@ -30,20 +36,39 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') { 
+        stage('Deliver') {
+            agent any
+            environment { 
+                VOLUME = '$(pwd)/sources:/src'
+                IMAGE = 'cdrx/pyinstaller-linux:python2'
+            }
             steps {
-                withEnv(["HOME=${env.WORKSPACE}"]) {
-                    input message: 'Yakin untuk deploy App ke production?'
-                    sh 'pip3 install pyinstaller'
-                    sh 'pip3 install Flask --user'
-                    sh 'apk add --no-cache binutils'
-                    sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
-                    sh 'chmod +x -R ./jenkins/scripts/kill.sh'
-                    sh './jenkins/scripts/deliver.sh'
-                    sh './jenkins/scripts/kill.sh' 
+                dir(path: env.BUILD_ID) { 
+                    unstash(name: 'compiled-results') 
+                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
+                }
+            }
+            post {
+                success {
+                    archiveArtifacts "${env.BUILD_ID}/sources/dist/add2vals" 
+                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
                 }
             }
         }
+        // stage('Deliver') { 
+        //     steps {
+        //         withEnv(["HOME=${env.WORKSPACE}"]) {
+        //             input message: 'Yakin untuk deploy App ke production?'
+        //             sh 'pip3 install pyinstaller'
+        //             sh 'pip3 install Flask --user'
+        //             sh 'apk add --no-cache binutils'
+        //             sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
+        //             sh 'chmod +x -R ./jenkins/scripts/kill.sh'
+        //             sh './jenkins/scripts/deliver.sh'
+        //             sh './jenkins/scripts/kill.sh' 
+        //         }
+        //     }
+        // }
         // stage('Deploy') { 
         //     steps {
         //         withEnv(["HOME=${env.WORKSPACE}"]) {

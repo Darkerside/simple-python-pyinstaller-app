@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 set +x
-if [ ! -d "~/pythonapp" ] 
+if [ ! -d "/var/jenkins_home/pythonapp" ] 
 then
   mkdir ~/pythonapp
 fi

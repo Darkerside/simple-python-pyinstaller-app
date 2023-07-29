@@ -58,7 +58,7 @@ pipeline {
         stage('Deploy') {
             agent {
                 docker {
-                    image 'alpinelinux/rsyncd'
+                    image 'jenkins/ssh-agent'
                 }
             }
             steps {

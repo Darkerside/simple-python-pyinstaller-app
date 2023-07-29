@@ -20,7 +20,7 @@ pipeline {
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'pip3 install pytest'
-                    sh 'py.test --junit-xml test-reports/results.xml sources/test_calc.py' 
+                    sh 'python -m pytest --junit-xml test-reports/results.xml sources/test_calc.py' 
                 }
             }
             post {

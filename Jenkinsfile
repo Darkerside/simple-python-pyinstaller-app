@@ -37,30 +37,12 @@ pipeline {
                 }
             }
         }
-        stage('Generate Exec') {
-            agent any
-            environment { 
-                VOLUME = '$(pwd)/sources:/src'
-                IMAGE = 'cdrx/pyinstaller-linux:python3'
-            }
-            steps {
-                dir(path: 'build') { 
-                    unstash(name: 'compiled-results') 
-                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
-                }
-            }
-            post {
-                success {
-                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
-                }
-            }
-        }
         stage('Deploy') {
             agent any
             steps {
                 input message: 'Yakin untuk deploy App ke production?'
                 sshagent (credentials: ['ec2jenkins']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l ec2-user 13.229.219.204 'cd dicoding/simple-python-pyinstaller-app; git pull; flask --app api run -h 172.31.44.164'"
+                    sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
                 }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'chmod +x -R ./jenkins/scripts/kill.sh'

@@ -34,11 +34,6 @@ pipeline {
                 always {
                     junit 'test-reports/results.xml' 
                 }
-                success {
-                    withEnv(["HOME=${env.WORKSPACE}"]) {
-                        sh 'rm -R -f ./build'
-                    }
-                }
             }
         }
         stage('Generate Exec') {

@@ -40,11 +40,11 @@ pipeline {
             agent any
             environment { 
                 VOLUME = '$(pwd)/sources:/src'
-                IMAGE = 'cdrx/pyinstaller-linux:latest'
+                IMAGE = 'cdrx/pyinstaller-linux:python3'
             }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
-                    sh 'pip install Flask --user'
+                    sh 'pip3 install Flask --user'
                 }
                 dir(path: env.BUILD_ID) { 
                     unstash(name: 'compiled-results') 

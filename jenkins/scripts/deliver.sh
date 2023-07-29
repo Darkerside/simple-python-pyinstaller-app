@@ -5,5 +5,3 @@ set +x
 # python -m flask --app api run -p 3000 &
 # sleep 1
 # echo $! > .pidfile
-cd 78
-ls

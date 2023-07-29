@@ -62,11 +62,14 @@ pipeline {
                 }
             }
             steps {
-                input message: 'Yakin untuk deploy App ke production?'
-                sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
-                sh 'chmod +x -R ./jenkins/scripts/kill.sh'
-                sh './jenkins/scripts/deploy.sh'
-                sh './jenkins/scripts/kill.sh'
+                withEnv(["HOME=${env.WORKSPACE}"]) {
+                    input message: 'Yakin untuk deploy App ke production?'
+                    sh 'pip3 install Flask'
+                    sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
+                    sh 'chmod +x -R ./jenkins/scripts/kill.sh'
+                    sh './jenkins/scripts/deploy.sh'
+                    sh './jenkins/scripts/kill.sh'
+                }
             }
         }
     }

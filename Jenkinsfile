@@ -36,6 +36,7 @@ pipeline {
                     input message: 'Yakin untuk deploy App ke production?'
                     sh 'pip3 install pyinstaller'
                     sh 'pip3 install Flask --user'
+                    sh 'apk install binutils'
                     sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
                     sh 'chmod +x -R ./jenkins/scripts/kill.sh'
                     sh './jenkins/scripts/deliver.sh'

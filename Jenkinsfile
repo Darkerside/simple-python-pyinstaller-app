@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
     options {
         skipStagesAfterUnstable()
     }
@@ -36,7 +36,7 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') {
+        stage('build') {
             agent any
             environment { 
                 VOLUME = '$(pwd)/sources:/src'
@@ -48,22 +48,24 @@ pipeline {
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                     sh "cp ./sources/dist/add2vals ~/add2vals"
                 }
-                input message: 'Yakin untuk deploy App ke production?'
-                script {
-                    sshagent(['ec2jenkinfile']) {
-                        sh "rsync -auvvzr --rsh 'ssh ssh -o StrictHostKeyChecking=no' ~/pythonapp/ ec2-user@ec2-13-229-219-204.ap-southeast-1.compute.amazonaws.com:/home/ec2-user/pythonapp/"
-                    }
-                }
-                sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
-                sh 'chmod +x -R ./jenkins/scripts/kill.sh'
-                sh './jenkins/scripts/deliver.sh'
-                sh './jenkins/scripts/kill.sh'
             }
             post {
                 success {
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
                 }
             }
+        }
+        stage('Deploy') {
+            input message: 'Yakin untuk deploy App ke production?'
+            script {
+                sshagent(['ec2jenkinfile']) {
+                    sh "rsync -auvvzr --rsh 'ssh ssh -o StrictHostKeyChecking=no' ~/pythonapp/ ec2-user@ec2-13-229-219-204.ap-southeast-1.compute.amazonaws.com:/home/ec2-user/pythonapp/"
+                }
+            }
+            sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
+            sh 'chmod +x -R ./jenkins/scripts/kill.sh'
+            sh './jenkins/scripts/deliver.sh'
+            sh './jenkins/scripts/kill.sh'
         }
         // stage('Deliver') { 
         //     steps {

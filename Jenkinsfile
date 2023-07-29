@@ -58,7 +58,7 @@ pipeline {
         stage('Deploy') {
             agent any
             steps {
-                sshagent (credentials: ['ec2jenkinfile']) {
+                sshagent (credentials: ['ec2jenkins']) {
                     sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 13.229.219.204 uname -a'
                 }
             }

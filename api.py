@@ -6,4 +6,4 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    return "Application Delivered Successfully!\n"
+    return "Application Delivered Successfully using pipeline!\n"

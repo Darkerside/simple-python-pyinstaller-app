@@ -4,19 +4,19 @@ pipeline {
         skipStagesAfterUnstable()
     }
     stages {
-        // stage('Compile') {
-        //     agent {
-        //         docker {
-        //             image 'python:3.7-alpine3.17'
-        //         }
-        //     }
-        //     steps {
-        //         withEnv(["HOME=${env.WORKSPACE}"]) {
-        //             sh 'python -m py_compile sources/add2vals.py sources/calc.py'
-        //             stash(name: 'compiled-results', includes: 'sources/*.py*')
-        //         }
-        //     }
-        // }
+        stage('Compile') {
+            agent {
+                docker {
+                    image 'python:3.7-alpine3.17'
+                }
+            }
+            steps {
+                withEnv(["HOME=${env.WORKSPACE}"]) {
+                    sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+                    stash(name: 'compiled-results', includes: 'sources/*.py*')
+                }
+            }
+        }
         // stage('Test') {
         //     agent {
         //         docker {
@@ -56,6 +56,7 @@ pipeline {
             }
         }
         stage('Deploy') {
+            agent any
             steps {
                 input message: 'Yakin untuk deploy App ke production?'
                 sh 'chmod +x -R ./jenkins/scripts/deliver.sh'

@@ -4,12 +4,12 @@ pipeline {
         skipStagesAfterUnstable()
     }
     stages {
-        {
-            docker {
-                image 'python:3.7-alpine3.17'
-            }
-        }
         stage('Build') {
+            {
+                docker {
+                    image 'python:3.7-alpine3.17'
+                }
+            }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'python -m py_compile sources/add2vals.py sources/calc.py'
@@ -17,7 +17,7 @@ pipeline {
                 }
             }
         }
-        stage('Test') { 
+        stage('Test') {
             {
                 docker {
                     image 'python:3.7-alpine3.17'

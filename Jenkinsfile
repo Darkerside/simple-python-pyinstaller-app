@@ -11,8 +11,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'pip3 install Flask --user'
-                sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+                sh '.jenkins/script/install.sh'
                 stash(name: 'compiled-results', includes: 'sources/*.py*')
             }
         }

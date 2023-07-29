@@ -10,11 +10,7 @@ pipeline {
     }
     stages {
         stage('Compile') {
-            agent {
-                docker {
-                    image 'python:3.7-alpine3.17'
-                }
-            }
+            agent any
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'python -m py_compile sources/add2vals.py sources/calc.py'
@@ -23,11 +19,7 @@ pipeline {
             }
         }
         stage('Test') {
-            agent {
-                docker {
-                    image 'python:3.7-alpine3.17'
-                }
-            }
+            agent any
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'pip3 install Flask'

@@ -8,13 +8,12 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.7-alpine3.17'
-                    image 'cdrx/pyinstaller-linux:latest'
                 }
             }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'python -m py_compile sources/add2vals.py sources/calc.py'
-                    sh 'pip3 install --upgrade pip && pip3 install wheel'
+                    sh 'pip3 install pyinstaller'
                     sh 'pip3 install Flask --user'
                     stash(name: 'compiled-results', includes: 'sources/*.py*')
                 }

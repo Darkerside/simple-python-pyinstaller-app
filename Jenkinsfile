@@ -7,11 +7,11 @@ pipeline {
         stage('Build') {
             agent {
                 docker {
-                    image 'python:2-alpine'
+                    image 'python:3.7-alpine3.17'
                 }
             }
             steps {
-                sh 'pip install Flask --user'
+                sh 'pip3 install Flask --user'
                 sh 'python -m py_compile sources/add2vals.py sources/calc.py'
                 stash(name: 'compiled-results', includes: 'sources/*.py*')
             }

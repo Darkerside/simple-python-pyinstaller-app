@@ -63,6 +63,9 @@ pipeline {
                 }
             }
             steps {
+                sshagent (credentials: ['ec2jenkinfile']) {
+                    sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 13.229.219.204 uname -a'
+                }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     input message: 'Yakin untuk deploy App ke production?'
                     sh 'chmod +x -R ./jenkins/scripts/deploy.sh'

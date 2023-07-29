@@ -17,25 +17,25 @@ pipeline {
                 }
             }
         }
-        // stage('Test') {
-        //     agent {
-        //         docker {
-        //             image 'python:3.7-alpine3.17'
-        //         }
-        //     }
-        //     steps {
-        //         withEnv(["HOME=${env.WORKSPACE}"]) {
-        //             sh 'pip3 install pytest'
-        //             sh 'python -m pytest --junit-xml test-reports/results.xml sources/test_calc.py' 
-        //             sh 'python -m pytest sources/test_api.py' 
-        //         }
-        //     }
-        //     post {
-        //         always {
-        //             junit 'test-reports/results.xml' 
-        //         }
-        //     }
-        // }
+        stage('Test') {
+            agent {
+                docker {
+                    image 'python:3.7-alpine3.17'
+                }
+            }
+            steps {
+                withEnv(["HOME=${env.WORKSPACE}"]) {
+                    sh 'pip3 install pytest'
+                    sh 'python -m pytest --junit-xml test-reports/results.xml sources/test_calc.py' 
+                    sh 'python -m pytest sources/test_api.py' 
+                }
+            }
+            post {
+                always {
+                    junit 'test-reports/results.xml' 
+                }
+            }
+        }
         stage('Generate Exec') {
             agent any
             environment { 
@@ -44,7 +44,7 @@ pipeline {
             }
             steps {
                 dir(path: env.BUILD_ID) { 
-                    // unstash(name: 'compiled-results') 
+                    unstash(name: 'compiled-results') 
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                     sh "cp ./sources/dist/add2vals ~/add2vals"
                 }

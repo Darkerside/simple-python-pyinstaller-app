@@ -58,7 +58,7 @@ pipeline {
             agent {
                 docker {
                     image 'rapidfort/flaskapp:latest'
-                    args '-p 3000:3000'
+                    args '-p 5000:5000'
                 }
             }
             steps {

@@ -11,7 +11,6 @@ pipeline {
                 }
             }
             steps {
-                // sh 'apk add --no-cache python3 py3-pip python3-flask'
                 sh 'pip install Flask'
                 sh 'python -m py_compile sources/add2vals.py sources/calc.py'
                 stash(name: 'compiled-results', includes: 'sources/*.py*')

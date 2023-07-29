@@ -36,6 +36,7 @@ pipeline {
                     sh 'pip3 install pyinstaller'
                     sh 'pip3 install Flask --user'
                     sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
+                    sh 'chmod +x -R ./jenkins/scripts/kill.sh'
                     sh './jenkins/scripts/deliver.sh'
                     sh './jenkins/scripts/kill.sh' 
                 }

@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 # creating deployment on server
 
-mkdir ~/pythonapp
 cp add2vals ~/pythonapp/add2vals
 cp app.py ~/app.py
 

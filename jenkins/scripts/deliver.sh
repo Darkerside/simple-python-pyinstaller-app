@@ -6,4 +6,4 @@ then
   mkdir ~/pythonapp
 fi
 cp ./api.py ~/pythonapp/api.py
-cp ./add2vals ~/pythonapp/add2vals
+cp /var/jenkins_home/add2vals ~/pythonapp/add2vals

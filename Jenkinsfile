@@ -49,6 +49,11 @@ pipeline {
                     sh "cp ./sources/dist/add2vals ~/add2vals"
                 }
             }
+            post {
+                success {
+                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
+                }
+            }
         }
         stage('Deploy') {
             steps {
@@ -60,11 +65,6 @@ pipeline {
                     sh "rsync -auvvzr --rsh 'ssh ssh -o StrictHostKeyChecking=no' ~/pythonapp/ ec2-user@ec2-13-229-219-204.ap-southeast-1.compute.amazonaws.com:/home/ec2-user/pythonapp/"
                 }
                 sh './jenkins/scripts/kill.sh'
-            }
-            post {
-                success {
-                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
-                }
             }
         }
     }

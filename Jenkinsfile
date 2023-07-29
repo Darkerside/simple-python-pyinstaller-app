@@ -1,16 +1,15 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.7-alpine3.17'
-            args '-p 5000:5000'
-        }
-    }
+    agent any
     options {
         skipStagesAfterUnstable()
     }
     stages {
         stage('Compile') {
-            agent any
+            agent {
+                docker {
+                    image 'python:3.7-alpine3.17'
+                }
+            }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'python -m py_compile sources/add2vals.py sources/calc.py'
@@ -19,7 +18,11 @@ pipeline {
             }
         }
         stage('Test') {
-            agent any
+            agent {
+                docker {
+                    image 'python:3.7-alpine3.17'
+                }
+            }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'pip3 install Flask'
@@ -38,15 +41,11 @@ pipeline {
             agent any
             steps {
                 input message: 'Yakin untuk deploy App ke production?'
-
-                // sshagent (credentials: ['ec2jenkins']) {
-                //     sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
-                // }
-                withEnv(["HOME=${env.WORKSPACE}"]) {
-
+                sshagent (credentials: ['ec2jenkins']) {
                     sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
+                }
+                withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'chmod +x -R ./jenkins/scripts/kill.sh'
-                    sh './jenkins/scripts/deploy.sh'
                     sh './jenkins/scripts/kill.sh'
                 }
             }

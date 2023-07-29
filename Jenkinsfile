@@ -11,7 +11,7 @@ pipeline {
                 }
             }
             steps {
-                sh '.jenkins/scripts/install.sh'
+                sh './jenkins/scripts/install.sh'
                 stash(name: 'compiled-results', includes: 'sources/*.py*')
             }
         }

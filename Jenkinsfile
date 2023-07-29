@@ -49,7 +49,7 @@ pipeline {
                 }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     input message: 'Yakin untuk deploy App ke production?'
-                    sh 'pip3 install Flask --user'
+                    sh 'pip install Flask --user'
                     sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
                     sh 'chmod +x -R ./jenkins/scripts/kill.sh'
                     sh './jenkins/scripts/deliver.sh'

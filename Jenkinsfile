@@ -27,12 +27,15 @@ pipeline {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'pip3 install pytest'
                     sh 'python -m pytest --junit-xml test-reports/results.xml sources/test_calc.py' 
-                    sh 'python -m pytest sources/test_api.py' 
+                    sh 'python -m pytest sources/test_api.py'
                 }
             }
             post {
                 always {
                     junit 'test-reports/results.xml' 
+                }
+                success {
+                    sh 'rm -R -f ./build'
                 }
             }
         }
@@ -43,10 +46,9 @@ pipeline {
                 IMAGE = 'cdrx/pyinstaller-linux:python3'
             }
             steps {
-                dir(path: env.BUILD_ID) { 
+                dir(path: 'build') { 
                     unstash(name: 'compiled-results') 
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
-                    sh "cp ./sources/dist/add2vals ~/add2vals"
                 }
             }
             post {
@@ -58,17 +60,14 @@ pipeline {
         stage('Deploy') {
             agent {
                 docker {
-                    image 'jenkins/ssh-agent'
+                    image 'python:3.7-alpine3.17'
                 }
             }
             steps {
                 input message: 'Yakin untuk deploy App ke production?'
-                sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
+                sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
                 sh 'chmod +x -R ./jenkins/scripts/kill.sh'
-                sh './jenkins/scripts/deliver.sh'
-                sshagent(credentials: ['ec2jenkinfile']) {
-                    sh "rsync -auvvzr --rsh 'ssh ssh -o StrictHostKeyChecking=no' ~/pythonapp/ ec2-user@ec2-13-229-219-204.ap-southeast-1.compute.amazonaws.com:/home/ec2-user/pythonapp/"
-                }
+                sh './jenkins/scripts/deploy.sh'
                 sh './jenkins/scripts/kill.sh'
             }
         }

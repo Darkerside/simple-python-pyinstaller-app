@@ -43,9 +43,6 @@ pipeline {
                 IMAGE = 'cdrx/pyinstaller-linux:python3'
             }
             steps {
-                withEnv(["HOME=${env.WORKSPACE}"]) {
-                    sh 'pip3 install Flask --user'
-                }
                 dir(path: env.BUILD_ID) { 
                     unstash(name: 'compiled-results') 
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 

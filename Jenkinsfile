@@ -56,22 +56,10 @@ pipeline {
             }
         }
         stage('Deploy') {
-            agent {
-                docker {
-                    image 'rapidfort/flaskapp:latest'
-                    args '-p 5000:5000'
-                }
-            }
+            agent any
             steps {
                 sshagent (credentials: ['ec2jenkinfile']) {
                     sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 13.229.219.204 uname -a'
-                }
-                withEnv(["HOME=${env.WORKSPACE}"]) {
-                    input message: 'Yakin untuk deploy App ke production?'
-                    sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
-                    sh 'chmod +x -R ./jenkins/scripts/kill.sh'
-                    sh './jenkins/scripts/deploy.sh'
-                    sh './jenkins/scripts/kill.sh'
                 }
             }
         }

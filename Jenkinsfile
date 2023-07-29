@@ -58,14 +58,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 input message: 'Yakin untuk deploy App ke production?'
-                script {
-                    sshagent(['ec2jenkinfile']) {
-                        sh "rsync -auvvzr --rsh 'ssh ssh -o StrictHostKeyChecking=no' ~/pythonapp/ ec2-user@ec2-13-229-219-204.ap-southeast-1.compute.amazonaws.com:/home/ec2-user/pythonapp/"
-                    }
-                }
                 sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
                 sh 'chmod +x -R ./jenkins/scripts/kill.sh'
                 sh './jenkins/scripts/deliver.sh'
+                sshagent(['ec2jenkinfile']) {
+                    sh "rsync -auvvzr --rsh 'ssh ssh -o StrictHostKeyChecking=no' ~/pythonapp/ ec2-user@ec2-13-229-219-204.ap-southeast-1.compute.amazonaws.com:/home/ec2-user/pythonapp/"
+                }
                 sh './jenkins/scripts/kill.sh'
             }
         }

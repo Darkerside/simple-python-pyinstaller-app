@@ -47,10 +47,17 @@ pipeline {
                     unstash(name: 'compiled-results') 
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                 }
+                withEnv(["HOME=${env.WORKSPACE}"]) {
+                    input message: 'Yakin untuk deploy App ke production?'
+                    sh 'pip3 install Flask --user'
+                    sh 'chmod +x -R ./jenkins/scripts/deliver.sh'
+                    sh 'chmod +x -R ./jenkins/scripts/kill.sh'
+                    sh './jenkins/scripts/deliver.sh'
+                    sh './jenkins/scripts/kill.sh' 
+                }
             }
             post {
                 success {
-                    archiveArtifacts "${env.BUILD_ID}/sources/dist/add2vals" 
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
                 }
             }

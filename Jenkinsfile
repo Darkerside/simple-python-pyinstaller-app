@@ -8,7 +8,6 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.7-alpine3.17'
-                    args '-p 5000:5000'
                 }
             }
             steps {
@@ -22,7 +21,6 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.7-alpine3.17'
-                    args '-p 5000:5000'
                 }
             }
             steps {
@@ -67,7 +65,12 @@ pipeline {
             }
         }
         stage('Deploy') {
-            agent any
+            agent {
+                docker {
+                    image 'python:3.7-alpine3.17'
+                    args '-p 5000:5000'
+                }
+            }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'chmod +x -R ./jenkins/scripts/serve.sh'

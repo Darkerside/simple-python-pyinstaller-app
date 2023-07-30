@@ -2,3 +2,4 @@
 
 sleep 1m
 echo "Pipeline Diakhiri!"
+kill $(cat .pidfile)

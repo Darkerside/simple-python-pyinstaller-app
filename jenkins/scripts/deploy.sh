@@ -9,3 +9,9 @@ ssh -o StrictHostKeyChecking=no -l ec2-user 13.229.219.204 'sudo su; cd dicoding
 echo ""
 echo "build the exec file"
 ssh -o StrictHostKeyChecking=no -l ec2-user 13.229.219.204 'sudo su; cd dicoding/simple-python-pyinstaller-app; pyinstaller -F ./sources/add2vals.py'
+
+echo ""
+echo "run local server on port 5000"
+python -m flask --app app run &
+sleep 1
+echo $! > .pidfile

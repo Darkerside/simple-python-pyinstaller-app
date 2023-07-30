@@ -49,7 +49,7 @@ pipeline {
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                 }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
-                    sh 'cd build/sources; ls'
+                    sh 'cp build/sources/dist dist'
                 }
             }
             post {
@@ -65,18 +65,14 @@ pipeline {
             }
         }
         stage('Deploy') {
-            agent {
-                docker {
-                    image 'python:3.7-alpine3.17'
-                    args '-p 5000:5000'
-                }
+            agent any
             }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'chmod +x -R ./jenkins/scripts/serve.sh'
                     sh './jenkins/scripts/serve.sh'
-                    sh 'chmod +x -R ./jenkins/scripts/kill.sh'
-                    sh './jenkins/scripts/kill.sh'
+                    // sh 'chmod +x -R ./jenkins/scripts/kill.sh'
+                    // sh './jenkins/scripts/kill.sh'
                 }
                 sshagent (credentials: ['ec2jenkins']) {
                     sh 'chmod +x -R ./jenkins/scripts/deploy.sh'

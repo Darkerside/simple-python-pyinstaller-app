@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
+apk install python3
 echo ""
 echo "run local server on port 5000"
 pip3 install Flask

@@ -2,3 +2,4 @@
 
 sleep 1m
 echo "Local Live Diakhiri!"
+kill $(cat pidfile)

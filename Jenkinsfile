@@ -59,11 +59,6 @@ pipeline {
             }
         }
         stage('Manual Approval') {
-            steps {
-                input message: 'Lanjutkan ke tahap Deploy??'
-            }
-        }
-        stage('Deploy') {
             agent {
                 docker {
                     image 'python:3.7-alpine3.17'
@@ -71,19 +66,27 @@ pipeline {
                 }
             }
             steps {
-                withEnv(["HOME=${env.WORKSPACE}"]) {
-                    sh 'chmod +x -R ./jenkins/scripts/serve.sh'
-                    sh './jenkins/scripts/serve.sh'
-                    // sh 'chmod +x -R ./jenkins/scripts/kill.sh'
-                    // sh './jenkins/scripts/kill.sh'
-                }
+                input message: 'Lanjutkan ke tahap Deploy??'
             }
             post {
-                always {
-                    sshagent (credentials: ['ec2jenkins']) {
-                        sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
-                        sh './jenkins/scripts/deploy.sh'
-                    }
+                success {
+                    sh 'chmod +x -R ./jenkins/scripts/serve.sh'
+                    sh './jenkins/scripts/serve.sh'
+                }
+            }
+        }
+        stage('Deploy') {
+            agent any
+            steps {
+                withEnv(["HOME=${env.WORKSPACE}"]) {
+                    // sh 'chmod +x -R ./jenkins/scripts/serve.sh'
+                    // sh './jenkins/scripts/serve.sh'
+                    sh 'chmod +x -R ./jenkins/scripts/kill.sh'
+                    sh './jenkins/scripts/kill.sh'
+                }
+                sshagent (credentials: ['ec2jenkins']) {
+                    sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
+                    sh './jenkins/scripts/deploy.sh'
                 }
             }
         }

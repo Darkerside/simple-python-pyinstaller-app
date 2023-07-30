@@ -49,6 +49,8 @@ pipeline {
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                 }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
+                    sh 'rm -R -f 83 84 85 86 87 88 90 91 92 94 95 96 97 *@tmp'
+                    sh 'cd build'
                     sh 'ls'
                 }
             }
@@ -62,6 +64,20 @@ pipeline {
             agent any
             steps {
                 input message: 'Lanjutkan ke tahap Deploy??'
+            }
+        }
+        stage('Local Live') {
+            agent {
+                docker {
+                    image 'python:3.7-alpine3.17'
+                    args '-p 5000:5000 -p 3000:80'
+                }
+            }
+            steps {
+                withEnv(["HOME=${env.WORKSPACE}"]) {
+                    sh 'chmod +x -R ./jenkins/scripts/serve.sh'
+                    sh './jenkins/scripts/serve.sh'
+                }
             }
         }
         stage('Deploy') {

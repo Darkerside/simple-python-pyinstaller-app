@@ -49,7 +49,7 @@ pipeline {
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                 }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
-                    sh 'cp ./build/dist dist'
+                    sh 'ls'
                 }
             }
             post {

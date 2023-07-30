@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.7-alpine3.17'
-            args '-p 5000:5000 -p 3000:80'
-        }
-    }
+    agent none
     options {
         skipStagesAfterUnstable()
     }
@@ -70,10 +65,18 @@ pipeline {
             }
         }
         stage('Local Live') {
+            agent {
+                docker {
+                    image 'python:3.7-alpine3.17'
+                    args '-p 3000:5000 -p 5000:80'
+                }
+            }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'chmod +x -R ./jenkins/scripts/serve.sh'
                     sh './jenkins/scripts/serve.sh'
+                    sh 'chmod +x -R ./jenkins/scripts/kill.sh'
+                    sh './jenkins/scripts/kill.sh'
                 }
             }
         }
@@ -83,10 +86,6 @@ pipeline {
                 sshagent (credentials: ['ec2jenkins']) {
                     sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
                     sh './jenkins/scripts/deploy.sh'
-                }
-                withEnv(["HOME=${env.WORKSPACE}"]) {
-                    sh 'chmod +x -R ./jenkins/scripts/kill.sh'
-                    sh './jenkins/scripts/kill.sh'
                 }
             }
         }

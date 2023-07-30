@@ -48,10 +48,10 @@ pipeline {
                     unstash(name: 'compiled-results') 
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                 }
-            }
-            withEnv(["HOME=${env.WORKSPACE}"]) {
+                withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'cp ./build/dist dist'
                 }
+            }
             post {
                 success {
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"

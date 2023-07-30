@@ -74,12 +74,12 @@ pipeline {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'chmod +x -R ./jenkins/scripts/serve.sh'
                     sh './jenkins/scripts/serve.sh'
-                    sh 'chmod +x -R ./jenkins/scripts/kill.sh'
-                    sh './jenkins/scripts/kill.sh'
+                    // sh 'chmod +x -R ./jenkins/scripts/kill.sh'
+                    // sh './jenkins/scripts/kill.sh'
                 }
             }
             post {
-                success {
+                always {
                     sshagent (credentials: ['ec2jenkins']) {
                         sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
                         sh './jenkins/scripts/deploy.sh'

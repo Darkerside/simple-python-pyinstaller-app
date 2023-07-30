@@ -59,25 +59,15 @@ pipeline {
             }
         }
         stage('Manual Approval') {
-            agent {
-                docker {
-                    image 'python:3.7-alpine3.17'
-                    args '-p 5000:5000'
-                }
-            }
             steps {
-                withEnv(["HOME=${env.WORKSPACE}"]) {
-                    sh 'chmod +x -R ./jenkins/scripts/serve.sh'
-                    sh './jenkins/scripts/serve.sh'
-                }
                 input message: 'Lanjutkan ke tahap Deploy??'
             }
         }
         stage('Deploy') {
-            agent any
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
-                    sh "ls"
+                    sh 'chmod +x -R ./jenkins/scripts/serve.sh'
+                    sh './jenkins/scripts/serve.sh'
                     sh 'chmod +x -R ./jenkins/scripts/kill.sh'
                     sh './jenkins/scripts/kill.sh'
                 }

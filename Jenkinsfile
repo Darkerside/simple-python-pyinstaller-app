@@ -8,6 +8,7 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.7-alpine3.17'
+                    args '-p 5000:5000'
                 }
             }
             steps {
@@ -21,6 +22,7 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.7-alpine3.17'
+                    args '-p 5000:5000'
                 }
             }
             steps {
@@ -49,7 +51,7 @@ pipeline {
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                 }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
-                    sh 'cd build; ls'
+                    sh 'cd build/sources; ls'
                 }
             }
             post {
@@ -64,13 +66,8 @@ pipeline {
                 input message: 'Lanjutkan ke tahap Deploy??'
             }
         }
-        stage('Local Live') {
-            agent {
-                docker {
-                    image 'python:3.7-alpine3.17'
-                    args '-p 3000:5000 -p 5000:80'
-                }
-            }
+        stage('Deploy') {
+            agent any
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'chmod +x -R ./jenkins/scripts/serve.sh'
@@ -78,11 +75,6 @@ pipeline {
                     sh 'chmod +x -R ./jenkins/scripts/kill.sh'
                     sh './jenkins/scripts/kill.sh'
                 }
-            }
-        }
-        stage('Deploy') {
-            agent any
-            steps {
                 sshagent (credentials: ['ec2jenkins']) {
                     sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
                     sh './jenkins/scripts/deploy.sh'

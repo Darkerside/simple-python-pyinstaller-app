@@ -64,6 +64,9 @@ pipeline {
             }
         }
         stage('Deploy') {
+            agent {
+                label 'linux'
+            }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'chmod +x -R ./jenkins/scripts/serve.sh'

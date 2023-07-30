@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.7-alpine3.17'
+            args '-p 5000:5000 -p 3000:80'
+        }
+    }
     options {
         skipStagesAfterUnstable()
     }
@@ -49,8 +54,7 @@ pipeline {
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                 }
                 withEnv(["HOME=${env.WORKSPACE}"]) {
-                    sh 'cd build'
-                    sh 'ls'
+                    sh 'cd build; ls'
                 }
             }
             post {
@@ -66,12 +70,6 @@ pipeline {
             }
         }
         stage('Local Live') {
-            agent {
-                docker {
-                    image 'python:3.7-alpine3.17'
-                    args '-p 5000:5000 -p 3000:80'
-                }
-            }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
                     sh 'chmod +x -R ./jenkins/scripts/serve.sh'

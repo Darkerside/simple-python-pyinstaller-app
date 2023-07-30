@@ -65,7 +65,10 @@ pipeline {
         }
         stage('Deploy') {
             agent {
-                label 'linux'
+                docker {
+                    image 'python:3.7-alpine3.17'
+                    args '-p 5000:5000'
+                }
             }
             steps {
                 withEnv(["HOME=${env.WORKSPACE}"]) {
@@ -74,9 +77,13 @@ pipeline {
                     sh 'chmod +x -R ./jenkins/scripts/kill.sh'
                     sh './jenkins/scripts/kill.sh'
                 }
-                sshagent (credentials: ['ec2jenkins']) {
-                    sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
-                    sh './jenkins/scripts/deploy.sh'
+            }
+            post {
+                success {
+                    sshagent (credentials: ['ec2jenkins']) {
+                        sh 'chmod +x -R ./jenkins/scripts/deploy.sh'
+                        sh './jenkins/scripts/deploy.sh'
+                    }
                 }
             }
         }

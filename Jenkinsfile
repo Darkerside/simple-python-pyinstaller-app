@@ -66,8 +66,10 @@ pipeline {
                 }
             }
             steps {
-                sh 'chmod +x -R ./jenkins/scripts/serve.sh'
-                sh './jenkins/scripts/serve.sh'
+                withEnv(["HOME=${env.WORKSPACE}"]) {
+                    sh 'chmod +x -R ./jenkins/scripts/serve.sh'
+                    sh './jenkins/scripts/serve.sh'
+                }
                 input message: 'Lanjutkan ke tahap Deploy??'
             }
         }
